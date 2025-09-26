@@ -313,6 +313,7 @@ function BukaPresensi() {
 
             $('#presensi-peserta').on('shown.bs.modal', function () {
                 $('#btnSimpan').addClass('hidden');
+                map.invalidateSize();
                 if (!map) {
                     // Buat map pertama kali
                     map = L.map('map');
@@ -352,7 +353,7 @@ function BukaPresensi() {
 
                     // Ambil polygon dari server
                     $.getJSON('get_lokasi', function (data) {
-                        polygonCoords = data.koordinat.map(p => [p.lng, p.lat]); // lng,lat sesuai geojson
+                        polygonCoords = data.koordinat.map(p => [p.lat, p.lng]); // simpan [lat, lng]
 
                         // Pastikan polygon tertutup
                         if (
@@ -362,18 +363,16 @@ function BukaPresensi() {
                             polygonCoords.push(polygonCoords[0]);
                         }
 
-                        // Gambar polygon di Leaflet (ingat Leaflet pakai [lat, lng])
-                        polygonLayer = L.polygon(data.koordinat.map(p => [p.lat, p.lng]), {
+                        polygonLayer = L.polygon(polygonCoords, {
                             color: "red",
                             fillColor: "#f03",
                             fillOpacity: 0.4
                         }).addTo(map);
 
-                        map.setView(polygonLayer.getBounds().getCenter(), 17);
+                        map.fitBounds(polygonLayer.getBounds());
                     });
 
                 } else {
-                    map.invalidateSize();
                     map.locate({ setView: true, maxZoom: 17 });
                 }
             });
