@@ -144,9 +144,8 @@ class HalamanPresensi extends CI_Controller
     public function get_lokasi()
     {
         $result = $this->apihelper->get('apiclient/get_lokasi');
-
         if ($result['status_code'] === 200 && $result['response']['status'] === 'success') {
-            $lokasi = $result['response']['data'];
+            $lokasi = $result['response']['data'][0];
             if ($lokasi) {
                 $lokasi['koordinat'] = json_decode($lokasi['polygon_json']); // decode dulu biar rapi
             }
