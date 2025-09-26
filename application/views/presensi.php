@@ -192,6 +192,8 @@
     <script src="assets/plugins/sweetalert2/sweetalert2.all.min.js"></script>
     <!--Password show & hide js -->
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+
     <?php
     if ($this->session->flashdata('info')) {
         $result = $this->session->flashdata('info');
@@ -216,7 +218,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js?v=1.0.0"></script>
+    <script src="assets/js/magang.js?v=1.0.1"></script>
 </body>
 
 </html>
