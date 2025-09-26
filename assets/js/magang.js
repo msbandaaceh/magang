@@ -403,11 +403,11 @@ function checkInsidePolygon(latlng) {
     $('#ket_map').html('');
 
     if (turf.booleanPointInPolygon(point, polygon)) {
-        $('#ket_map').append('<p class="text-success bg-secondary">Anda Diperbolehkan Presensi</p>');
+        $('#ket_map').append('<p class="text-white bg-success">Anda Diperbolehkan Presensi</p>');
         $('#btnSimpan').removeClass('hidden');
         $("#btnSimpan").attr("disabled", false); // Aktifkan tombol
     } else {
-        $('#ket_map').append('<p class="text-danger bg-secondary">Anda Tidak Diperbolehkan presensi karena diluar lokasi presensi</p>');
+        $('#ket_map').append('<p class="text-white bg-danger">Anda Tidak Diperbolehkan presensi karena diluar lokasi presensi</p>');
         $('#btnSimpan').addClass('hidden');
         $("#btnSimpan").attr("disabled", true); // Nonaktifkan tombol
     }
