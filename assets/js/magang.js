@@ -420,7 +420,7 @@ function bukaDetailPresensi() {
         var json = jQuery.parseJSON(response);
         if (json.st == 1) {
 
-            if (token_cookies == '') {
+            if (json.token == '') {
                 simpanPerangkat(id);
             } else if (token_cookies != json.token) {
                 notifikasi('Anda Menggunakan Perangkat Lain Untuk Presensi. Silakan Menggunakan Perangkat Yang Telah Didaftarkan Untuk Presensi', 2);
