@@ -404,12 +404,10 @@ function checkInsidePolygon(latlng) {
 
     if (turf.booleanPointInPolygon(point, polygon)) {
         $('#ket_map').append('<p class="text-white bg-success">Anda Diperbolehkan Presensi</p>');
-        $('#btnSimpan').removeClass('hidden');
-        $("#btnSimpan").attr("disabled", false); // Aktifkan tombol
+        document.getElementById('btnSimpan').style.display = 'block';
     } else {
         $('#ket_map').append('<p class="text-white bg-danger">Anda Tidak Diperbolehkan presensi karena diluar lokasi presensi</p>');
-        $('#btnSimpan').addClass('hidden');
-        $("#btnSimpan").attr("disabled", true); // Nonaktifkan tombol
+        document.getElementById('btnSimpan').style.display = 'none';
     }
 }
 
@@ -439,7 +437,7 @@ function bukaDetailPresensi() {
                     $("#jam_pulang").html('');
                     $("#jam_pulang").append(json.jam_pulang);
                     $('#jam_pulang').toggleClass('bg-danger bg-success');
-                    $("#btnSimpan").attr("disabled", true);
+                    document.getElementById('btnSimpan').style.display = 'none';
                 }
             }
         } else if (json.st == 0) {
