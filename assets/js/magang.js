@@ -487,6 +487,8 @@ function offKamera() {
 // fungsi ini akan dieksekusi jika izin telah diberikan
 function handleVideo(stream) {
     video.srcObject = stream;
+    video.width = 160;   // properti bawaan HTML video
+    video.height = 240;
 }
 
 // fungsi ini akan dieksekusi kalau user menolak izin
@@ -498,7 +500,7 @@ function videoError(e) {
 function takeSnapshot() {
 
     // ambil ukuran video
-    var width = 320
+    var width = 160
         , height = 240;
 
     // buat elemen canvas

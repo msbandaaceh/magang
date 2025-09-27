@@ -166,7 +166,7 @@
                         </center>
                     </div>
 
-                    <div id="my_camera"></div>
+                    <div class="mb-3" id="my_camera"></div>
                     <br />
                     <p class="text-center">
                         <button class="btn btn-info" value="Take Snapshot" data-bs-toggle="modal"
@@ -218,7 +218,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js"></script>
+    <script src="assets/js/magang.js?v=1.0.0"></script>
 </body>
 
 </html>
