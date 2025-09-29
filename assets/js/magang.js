@@ -449,100 +449,70 @@ function bukaDetailPresensi() {
     });
 }
 
-// buat elemen img
-var img = document.createElement('img');
-var context;
-
-// seleksi elemen video dan canvas
-var video = document.querySelector("#video-webcam");
+let video = document.querySelector("#video-webcam");
+let img = document.createElement("img");
+let stream = null;
 
 function aturIzin() {
-    // kosongkan value base64 foto tamu
     document.getElementById("fotobase").value = "";
 
-    // opsi kamera (default kamera depan)
     let constraints = {
-        video: {
-            facingMode: "user" // ganti "environment" untuk kamera belakang
-        },
+        video: { facingMode: "user" }, // bisa diganti "environment" untuk kamera belakang
         audio: false
     };
 
-    // API modern (iOS Safari, Chrome, Firefox, Edge)
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia(constraints)
             .then(handleVideo)
             .catch(videoError);
-    } else if (navigator.getUserMedia) {
-        // fallback API lama
-        navigator.getUserMedia(constraints, handleVideo, videoError);
     } else {
-        alert("Browser Anda tidak mendukung akses kamera.");
+        alert("Browser tidak mendukung kamera.");
     }
 }
 
-function offKamera() {
-    var stream = video.srcObject;
-    var tracks = stream.getTracks();
-
-    for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
-        track.stop();
-    }
-
-    video.srcObject = null;
-}
-
-// fungsi ini akan dieksekusi jika izin telah diberikan
-function handleVideo(stream) {
-    //let video = document.getElementById("my_camera");
+function handleVideo(mediaStream) {
+    stream = mediaStream;
     video.srcObject = stream;
 
-    // Pastikan video bisa diputar inline di iOS Safari
+    // fix iOS Safari
     video.setAttribute("playsinline", true);
+    video.play();
 
-    // biar video auto menyesuaikan lebar modal/container
+    // auto responsif
     video.style.width = "100%";
     video.style.height = "auto";
 }
 
-// fungsi ini akan dieksekusi kalau user menolak izin
 function videoError(e) {
-    // do something
-    alert("Izinkan menggunakan kamera untuk foto")
+    console.error(e);
+    alert("Izinkan kamera untuk melanjutkan.");
 }
 
 function takeSnapshot() {
+    let canvas = document.createElement("canvas");
+    let context = canvas.getContext("2d");
 
-    // ambil ukuran video
-    var width = 160
-        , height = 240;
+    // pakai ukuran asli video agar jelas
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
 
-    // buat elemen canvas
-    canvas1 = document.createElement('canvas');
-    canvas1.width = width;
-    canvas1.height = height;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // ambil gambar dari video dan masukan 
-    // ke dalam canvas
-    context = canvas1.getContext('2d');
-    context.drawImage(video, 0, 0, width, height);
+    let dataURL = canvas.toDataURL("image/jpeg");
+    document.getElementById("fotobase").value = dataURL.replace(/^data:image\/jpeg;base64,/, "");
 
-    //render hasil dari canvas ke elemen img
-    img.src = canvas1.toDataURL('image/jpg');
+    img.src = dataURL;
+    img.className = "img-fluid rounded mt-2";
+    let fotoDiv = document.getElementById("foto");
+    fotoDiv.innerHTML = "";
+    fotoDiv.appendChild(img);
 
-    imagebase64 = canvas1.toDataURL('image/jpg');
-    var data = imagebase64.replace('data:image/png;base64,', '')
+    offKamera(); // matikan kamera setelah ambil foto
+}
 
-    //document.body.appendChild(img);
-    if (document.getElementById("foto").hasChildNodes()) {
-        document.getElementById("foto").removeChild(img);
-        document.getElementById("foto").appendChild(img);
-        document.getElementById("fotobase").value = data;
-    } else {
-        document.getElementById("fotobase").value = data;
-        document.getElementById("foto").appendChild(img);
+function offKamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
     }
-
-    offKamera();
+    video.srcObject = null;
 }

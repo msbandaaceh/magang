@@ -142,38 +142,23 @@
     </div>
 
     <!-- ============ MODAL KAMERA =============== -->
-    <div class="modal fade" id="modal_kamera" tabindex="-1" role="dialog" aria-labelledby="largeModal"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="modal_kamera" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content bg-gradient-moonlit">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-toggle="modal"
-                        data-bs-target="#presensi-peserta" aria-label="Close" onclick="offKamera()"></button>
+                    <h5 class="modal-title">Silakan Foto Diri Anda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="offKamera()"></button>
                 </div>
-
-                <div class="modal-header">
-                    <p class="text-center">
-                    <h3 class="modal-title" id="myModalLabel">Silakan Foto Diri Anda</h3>
-                    </p>
+                <div class="modal-body text-center">
+                    <video id="video-webcam" autoplay playsinline muted
+                        style="width:100%; height:auto; border-radius:8px; background:#000;">
+                        Browser tidak mendukung kamera.
+                    </video>
                 </div>
-
-                <div class="modal-body">
-                    <div>
-                        <center>
-                            <video autoplay="false" id="video-webcam">
-                                Browsermu tidak mendukung bro, upgrade donk!
-                            </video>
-                        </center>
-                    </div>
-
-                    <div class="mb-3" id="my_camera"></div>
-                    <br />
-                    <p class="text-center">
-                        <button class="btn btn-info" value="Take Snapshot" data-bs-toggle="modal"
-                            data-bs-target="#presensi-peserta" onclick="takeSnapshot()">Ambil
-                            Foto</button>
-                        <input type="hidden" name="image" class="image-tag">
-                    </p>
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="takeSnapshot()" data-bs-dismiss="modal">📸 Ambil
+                        Foto</button>
                 </div>
             </div>
         </div>
@@ -218,7 +203,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js"></script>
+    <script src="assets/js/magang.js?v=1.0.0"></script>
 </body>
 
 </html>
