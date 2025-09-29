@@ -218,7 +218,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js"></script>
+    <script src="assets/js/magang.js?v=2.0"></script>
 </body>
 
 </html>

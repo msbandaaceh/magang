@@ -460,13 +460,24 @@ function aturIzin() {
     // kosongkan value base64 foto tamu
     document.getElementById("fotobase").value = "";
 
-    // minta izin user
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+    // opsi kamera (default kamera depan)
+    let constraints = {
+        video: {
+            facingMode: "user" // ganti "environment" untuk kamera belakang
+        },
+        audio: false
+    };
 
-    // jika user memberikan izin
-    if (navigator.getUserMedia) {
-        // jalankan fungsi handleVideo, dan videoError jika izin ditolak
-        navigator.getUserMedia({ video: true }, handleVideo, videoError);
+    // API modern (iOS Safari, Chrome, Firefox, Edge)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(handleVideo)
+            .catch(videoError);
+    } else if (navigator.getUserMedia) {
+        // fallback API lama
+        navigator.getUserMedia(constraints, handleVideo, videoError);
+    } else {
+        alert("Browser Anda tidak mendukung akses kamera.");
     }
 }
 
@@ -484,9 +495,15 @@ function offKamera() {
 
 // fungsi ini akan dieksekusi jika izin telah diberikan
 function handleVideo(stream) {
+    let video = document.getElementById("my_camera");
     video.srcObject = stream;
-    video.width = 160;   // properti bawaan HTML video
-    video.height = 240;
+
+    // Pastikan video bisa diputar inline di iOS Safari
+    video.setAttribute("playsinline", true);
+
+    // biar video auto menyesuaikan lebar modal/container
+    video.style.width = "100%";
+    video.style.height = "auto";
 }
 
 // fungsi ini akan dieksekusi kalau user menolak izin
