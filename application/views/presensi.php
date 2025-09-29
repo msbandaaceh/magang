@@ -156,8 +156,9 @@
                         Browser tidak mendukung kamera.
                     </video>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-success" onclick="takeSnapshot()" data-bs-dismiss="modal">📸 Ambil
+                <div class="modal-footer text-center">
+                    <button class="btn btn-success" onclick="takeSnapshot()" data-bs-toggle="modal"
+                            data-bs-target="#presensi-peserta">📸 Ambil
                         Foto</button>
                 </div>
             </div>
@@ -203,7 +204,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js?v=1.0.0"></script>
+    <script src="assets/js/magang.js?v=1.0.1"></script>
 </body>
 
 </html>
