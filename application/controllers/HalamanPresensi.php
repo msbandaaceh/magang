@@ -100,7 +100,7 @@ class HalamanPresensi extends CI_Controller
             if ($jamSekarang <= $jamTengahHari) { // Before 12:00 PM
                 $querySimpan = 2;
             } else { // After 12:00 PM, check out
-                $id = $cekPresensi->id;
+                $id = $cekPresensi->row()->id;
                 $dataPengguna = array(
                     'pulang' => $jam,
                     'foto_pulang' => $foto,

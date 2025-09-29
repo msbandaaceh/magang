@@ -495,7 +495,7 @@ function offKamera() {
 
 // fungsi ini akan dieksekusi jika izin telah diberikan
 function handleVideo(stream) {
-    let video = document.getElementById("my_camera");
+    //let video = document.getElementById("my_camera");
     video.srcObject = stream;
 
     // Pastikan video bisa diputar inline di iOS Safari
