@@ -83,7 +83,20 @@ class HalamanPresensi extends CI_Controller
         $this->load->model('Model', 'model');
         $peserta = $this->security->xss_clean($this->input->post('peserta'));
         $jam = $this->security->xss_clean($this->input->post('jam'));
-        $foto = $this->security->xss_clean($this->input->post('foto'));
+        $foto = $this->input->post('foto');
+
+        $data = base64_decode($foto);
+        // bikin nama file unik
+        $filename = 'foto_' . time() . '.jpg';
+        $path = FCPATH . 'uploads/foto/'.$peserta.'/' . $filename;
+        $dbpath = 'uploads/foto/'.$peserta.'/' . $filename;
+        // pastikan folder ada
+        if (!is_dir(FCPATH . 'uploads/foto/'.$peserta.'/')) {
+            mkdir(FCPATH . 'uploads/foto/'.$peserta.'/', 0777, true);
+        }
+
+        // simpan file ke folder
+        file_put_contents($path, $data);
 
         $jamSekarang = strtotime($jam);
         $jamTengahHari = strtotime('12:00:00');
@@ -103,7 +116,7 @@ class HalamanPresensi extends CI_Controller
                 $id = $cekPresensi->row()->id;
                 $dataPengguna = array(
                     'pulang' => $jam,
-                    'foto_pulang' => $foto,
+                    'foto_pulang' => $dbpath,
                     'modified_by' => $fullname,
                     'modified_on' => date('Y-m-d H:i:s')
                 );
@@ -114,7 +127,7 @@ class HalamanPresensi extends CI_Controller
                 $dataPengguna = array(
                     'peserta_id' => $peserta,
                     'masuk' => $jam,
-                    'foto_masuk' => $foto,
+                    'foto_masuk' => $dbpath,
                     'tgl' => date('Y-m-d'),
                     'created_on' => date('Y-m-d H:i:s'),
                     'created_by' => $fullname
@@ -123,7 +136,7 @@ class HalamanPresensi extends CI_Controller
                 $dataPengguna = array(
                     'peserta_id' => $peserta,
                     'pulang' => $jam,
-                    'foto_pulang' => $foto,
+                    'foto_pulang' => $dbpath,
                     'tgl' => date('Y-m-d'),
                     'created_on' => date('Y-m-d H:i:s'),
                     'created_by' => $fullname

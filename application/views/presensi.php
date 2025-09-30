@@ -115,7 +115,7 @@
                                 <div class="col mb-0">
                                     <div class="form-group" style="display: grid; place-items: center;">
                                         <label class="form-label">Foto</label>
-                                        <div>
+                                        <div class="mb-3">
                                             <div id="foto"></div>
                                             <input class="form-control" id="fotobase" name="foto" hidden></label>
                                         </div>
