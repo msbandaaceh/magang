@@ -37,7 +37,17 @@ class HalamanLaporan extends MY_Controller
         $presensi_id = $this->encryption->decrypt(base64_decode($this->input->post('presensi_id')));
         $peserta_id = $this->encryption->decrypt(base64_decode($this->input->post('peserta_id')));
 
-        $ket = array('' => "-- Keterangan --", 'Manual Presensi' => 'Manual Presensi', 'Tidak Presensi' => 'Tidak Presensi', 'Izin Terlambat Masuk' => 'Izin Terlambat Masuk', 'Izin Tidak Masuk *Hakim' => 'Izin Tidak Masuk *Hakim', 'Piket Malam' => 'Piket Malam', 'Work From Home' => 'Work From Home', 'Tanpa Keterangan' => 'Tanpa Keterangan', 'Dinas Luar' => 'Dinas Luar', 'Cuti Tahunan' => 'Cuti Tahunan', 'Cuti Sakit' => 'Cuti Sakit', 'Cuti Melahirkan' => 'Cuti Melahirkan', 'Cuti Alasan Penting' => 'Cuti Alasan Penting', 'Cuti Besar' => 'Cuti Besar', 'Libur' => 'Libur');
+        $ket = array(
+            '' => "-- Keterangan --",
+            'Manual Presensi' => 'Manual Presensi',
+            'Tidak Presensi' => 'Tidak Presensi',
+            'Izin Terlambat Masuk' => 'Izin Terlambat Masuk',
+            'Izin Tidak Masuk' => 'Izin Tidak Masuk',
+            'Izin Pulang Cepat' => 'Izin Pulang Cepat',
+            'Izin Kuliah' => 'Izin Kuliah',
+            'Tanpa Keterangan' => 'Tanpa Keterangan',
+            'Sakit' => 'Sakit'
+        );
 
         $nama = $this->model->get_seleksi_array('register_peserta_magang', ['id' => $peserta_id])->row()->nama;
 
