@@ -172,21 +172,29 @@ class HalamanLaporan extends MY_Controller
         $tgl_akhir = $this->input->post('tgl_akhir');
         $peserta = $this->input->post('peserta');
 
-        $url = site_url('halamanlaporan/cetak_presensi/'.$tgl_awal.'/'.$tgl_akhir.'/'.$peserta);
+        $url = site_url('halamanlaporan/cetak_presensi/' . $tgl_awal . '/' . $tgl_akhir . '/' . $peserta);
         echo json_encode(['success' => 1, 'message' => 'Download Daftar Hadir Berhasil', 'url' => $url]);
         return;
     }
 
-    public function cetak_presensi($tgl_awal, $tgl_akhir, $peserta) {
+    public function cetak_presensi($tgl_awal, $tgl_akhir, $peserta)
+    {
         $get_data_peserta = $this->model->get_seleksi_array('register_peserta_magang', ['id' => $peserta]);
         $data['nama'] = $get_data_peserta->row()->nama;
         $data['nim'] = $get_data_peserta->row()->nim;
         $data['prodi'] = $get_data_peserta->row()->program_studi;
         $data['nama_pt'] = $get_data_peserta->row()->nama_pt;
-        $data['kop'] = $this->session->userdata('kop_satker');
         $data['satker'] = ucwords(strtolower($this->session->userdata('nama_pengadilan')));
 
         $data['data_presensi'] = $this->model->get_data_presensi($peserta, $tgl_awal, $tgl_akhir);
+        // === konversi kop ke base64 ===
+        $kop_path = $this->session->userdata('kop_satker');
+        if (filter_var($kop_path, FILTER_VALIDATE_URL)) {
+            $image_data = @file_get_contents($kop_path);
+            $data['kop'] = $image_data ? 'data:image/webp;base64,' . base64_encode($image_data) : '';
+        } else {
+            $data['kop'] = '';
+        }
 
         $html = $this->load->view('template_presensi', $data, true);
         $this->pdf->loadHtml($html);

@@ -132,17 +132,17 @@
                 $no = 1;
                 foreach ($data_presensi as $row) {
                     ?>
-                    <tr class="text-center">
-                        <td style="padding: 1px">
+                    <tr>
+                        <td class="text-center" style="padding: 1px">
                             <?= $no; ?>
                         </td>
-                        <td style="padding: 1px">
+                        <td class="text-center" style="padding: 1px">
                             <?= $row['tanggal']; ?>
                         </td>
-                        <td style="padding: 1px">
+                        <td class="text-center" style="padding: 1px">
                             <?= $row['masuk']; ?>
                         </td>
-                        <td style="padding: 1px">
+                        <td class="text-center" style="padding: 1px">
                             <?= $row['pulang']; ?>
                         </td>
                         <td class="text-center" style="padding: 1px">
