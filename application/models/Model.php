@@ -244,8 +244,7 @@ class Model extends CI_Model
                 'tgl' => $tgl
             ];
 
-            $result = $this->apihelper->get($this->config->item('api_izincuti') . '/cek_tgl_merah', $params);
-            die(var_dump($result));
+            $result = $this->apihelper->get2($this->config->item('api_izincuti') . '/cek_tgl_merah', $params);
             if ($result['status_code'] == 200 && $result['response']['status'] == 'success') {
                 $data_tampil[] = [
                     'tanggal' => $this->tanggalhelper->convertDayDate($tgl),
