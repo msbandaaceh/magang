@@ -51,6 +51,32 @@ $(function () {
             }
         });
     });
+
+    $(document).off('submit', '#formEditPresensi').on('submit', '#formEditPresensi', function (e) {
+        e.preventDefault();
+        let form = this;
+        let formData = new FormData(form);
+
+        $.ajax({
+            url: 'simpan_edit_presensi',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (res) {
+                notifikasi(res.message, res.success);
+                if (res.success == '1') {
+                    $('#edit-presensi').modal('hide');
+                    var tanggal = document.getElementById('tglPresensi').value;
+                    loadTabelPresensiPesertaMagang(tanggal);
+                }
+            },
+            error: function () {
+                notifikasi('Terjadi kesalahan saat menyimpan data.', 4);
+            }
+        });
+    });
 });
 
 function notifikasi(pesan, result) {
@@ -90,11 +116,28 @@ function info(pesan) {
 
 function loadPage(page) {
     cekToken();
-    $('#app').html('<div class="page-wrapper"><div class="page-content"><div class="text-center p-4">Memuat...</div></div></div>');
+    $('#app').html(`
+        <div class="page-wrapper">
+            <div class="page-content">
+                <div class="text-center p-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+                <div class="text-center">
+                    <span>Memuat Halaman... Harap Tunggu Sebentar</span>
+                </div>
+            </div>
+        </div>
+    `);
     $.get("halamanutama/page/" + page, function (data) {
         $('#app').html(data);
     }).fail(function () {
-        $('#app').html('<div class="text-danger">Halaman tidak ditemukan.</div>');
+        $('#app').html(`
+            <div class="page-wrapper">
+                <div class="page-content">
+                    <div class="text-center p-4">Halaman tidak ditemukan.</div>
+                </div>
+            </div>
+        `);
     });
 }
 
@@ -515,4 +558,240 @@ function offKamera() {
         stream.getTracks().forEach(track => track.stop());
     }
     video.srcObject = null;
+}
+
+function loadTanggal() {
+    tglPicker = flatpickr('#tglPresensi', {
+        altFormat: 'l, d F Y',
+        altInput: true,
+        dateFormat: 'Y-m-d',
+        locale: {
+            firstDayOfWeek: 7,
+            weekdays: {
+                shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            },
+            months: {
+                shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+            },
+        },
+        onDayCreate: function (dObj, dStr, fp, dayElem) {
+            var day = dayElem.dateObj.getDay();
+            var dateStr = fp.formatDate(dayElem.dateObj, "Y-m-d");
+
+            // Disable Sabtu & Minggu + tanggal merah (tidak bisa diklik langsung)
+            if (day === 0 || day === 6) {
+                dayElem.classList.add("disabled-date");
+            }
+        },
+        onReady: function (selectedDates, dateStr, instance) {
+            // Cegah klik langsung di tanggal disable
+            instance.calendarContainer.addEventListener("click", function (e) {
+                if (e.target.closest(".disabled-date")) {
+                    e.stopPropagation();
+                }
+            }, true);
+
+            instance.setDate(new Date(), true);
+        }
+    });
+}
+
+function loadTabelPresensiPesertaMagang(tgl) {
+    $.post('show_tabel_presensi_peserta_magang', { tgl: tgl }, function (response) {
+        try {
+            const json = JSON.parse(response); // Pastikan server kirim JSON valid
+            $('#tabelPresensiPesertaMagang').html(''); // kosongkan wrapper
+
+            if (!json.data_peserta || json.data_peserta.length === 0) {
+                // Kalau kosong
+                $('#tabelPresensiPesertaMagang').html(`
+                    <div class="alert border-0 border-start border-5 border-info alert-dismissible fade show py-2">
+                        <div class="d-flex align-items-center">
+                            <div class="font-35 text-info"><i class='bx bx-info-square'></i></div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 text-info">Informasi</h6>
+                                <div>Belum Ada Peserta Magang Yang Diinput. Terima kasih.</div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                return;
+            }
+
+            // Kalau ada data, buat tabelnya
+            let data = `
+                <div class="table-responsive">
+                <table id="tabelPresensiPesertaMagangData" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>NO</th>
+                            <th>NAMA PESERTA</th>
+                            <th>JAM DATANG</td>
+                            <th>JAM PULANG</th>
+                            <th>KETERANGAN></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            json.data_peserta.forEach((row, index) => {
+
+                let badgeMasuk = '';
+                let badgePulang = '';
+
+                if (row.masuk) {
+                    badgeMasuk = `<span class="badge bg-success p-2" onclick="lihatFoto('${row.presensi_id}', '1')">${row.masuk}</span>`;
+                } else {
+                    badgeMasuk = `<span class="badge bg-danger p-2">Belum Presensi</span>`;
+                }
+
+                if (row.pulang) {
+                    badgePulang = `<span class="badge bg-success p-2" onclick="lihatFoto('${row.presensi_id}', '2')">${row.pulang}</span>`;
+                } else {
+                    badgePulang = `<span class="badge bg-danger p-2">Belum Presensi</span>`;
+                }
+
+                // Baris tabel
+                data += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><button onclick="EditPresensi('${row.presensi_id}','${row.id}')" style="background: transparent; border: none !important;">
+                            <p class="text-white">${row.nama}</p>
+                            </button>
+                        </td>
+                        <td>${badgeMasuk}</td>
+                        <td>${badgePulang}</td>
+                        <td>${row.keterangan}</td>
+                    </tr>
+                `;
+            });
+
+            data += `
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>NO</th>
+                            <th>NAMA PESERTA</th>
+                            <th>JAM DATANG</td>
+                            <th>JAM PULANG</th>
+                            <th>KETERANGAN></th>
+                        </tr>
+                    </tfoot>
+                </table>
+                </div>
+            `;
+
+            $('#tabelPresensiPesertaMagang').append(data);
+
+            // Aktifkan DataTables
+            $("#tabelPresensiPesertaMagangData").DataTable();
+        } catch (e) {
+            console.error("Gagal parsing JSON:", e);
+            $('#tabelPresensiPesertaMagang').html('<div class="alert alert-danger">Gagal memuat data presensi peserta magang.</div>');
+        }
+    });
+}
+
+function cariPresensi() {
+    var tanggal = document.getElementById('tglPresensi').value;
+    loadTabelPresensiPesertaMagang(tanggal);
+}
+
+function EditPresensi(presensi_id, peserta_id) {
+    var tanggal = document.getElementById('tglPresensi').value;
+    $.post('edit_presensi', {
+        presensi_id: presensi_id, peserta_id: peserta_id
+    }, function (response) {
+        var json = jQuery.parseJSON(response);
+        if (json.st == 1) {
+            $("#edit-presensi").modal('show');
+            $("#judul_").html("");
+            $("#id").val('');
+            $('#nama').val('');
+            $("#peserta_id").val('');
+            $("#jam_datang").val('');
+            $("#jam_pulang").val('');
+            $("#ket_").html('');
+            $('#tgl').val('');
+
+            $("#judul_").append(json.judul);
+            $("#id").val(json.id);
+            $("#peserta_id").val(json.peserta_id);
+            $('#nama').val(json.nama);
+            $('#tgl').val(tanggal);
+
+            // set nilai default
+            const jamDatang = json.masuk ? json.masuk : '';
+            const jamPulang = json.pulang ? json.pulang : '';
+
+            // isi value input
+            $("#jam_datang").val(jamDatang);
+            $("#jam_pulang").val(jamPulang);
+
+            // aktifkan flatpickr setelah modal ditampilkan
+            const jam_datang = flatpickr("#jam_datang", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i:S",
+                time_24hr: true,
+                defaultDate: jamDatang || null,
+                minuteIncrement: 1,
+                allowInput: true
+            });
+
+            const jam_pulang = flatpickr("#jam_pulang", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i:S",
+                time_24hr: true,
+                defaultDate: jamPulang || null,
+                minuteIncrement: 1,
+                allowInput: true
+            });
+
+            $("#ket_").append(json.ket);
+            $('#ket').select2({
+                theme: 'bootstrap4',
+                dropdownParent: $('#edit-presensi'),
+                width: '100%',
+            });
+
+            document.getElementById('hapus_datang').addEventListener('click', () => {
+                jam_datang.clear();
+            });
+
+            document.getElementById('hapus_pulang').addEventListener('click', () => {
+                jam_pulang.clear();
+            });
+        } else if (json.st == 0) {
+            pesan('PERINGATAN', json.msg, '');
+            $('#table_pegawai').DataTable().ajax.reload();
+        }
+    });
+}
+
+function lihatFoto(presensi_id, jenis) {
+    $.post('lihat_foto', {
+        presensi_id: presensi_id, jenis: jenis
+    }, function (response) {
+        var json = jQuery.parseJSON(response);
+        if (json.st == 1) {
+            $("#lihat-foto").modal('show');
+            $("#judul_modal").html("");
+            $("#foto_").html("");
+
+            $("#judul_modal").append(json.judul);
+            $("#foto_").append(`
+                <img class="text-center" src="${json.foto}" width="100%">
+                `);
+
+        } else if (json.st == 0) {
+            pesan('PERINGATAN', json.msg, '');
+            $('#table_pegawai').DataTable().ajax.reload();
+        }
+    });
 }

@@ -80,7 +80,7 @@
 
                 <li class="menu-label">Laporan</li>
                 <li>
-                    <a href="javascript:;" data-page="presensi">
+                    <a href="javascript:;" data-page="laporan_presensi">
                         <div class="parent-icon"><i class='bx bx-user-circle'></i>
                         </div>
                         <div class="menu-title">Presensi</div>
@@ -173,6 +173,7 @@
             // Navigasi SPA
             $('[data-page]').on('click', function (e) {
                 e.preventDefault();
+                $('.wrapper').removeClass('toggled');
                 let page = $(this).data('page');
                 loadPage(page);
             });
@@ -187,7 +188,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js"></script>
+    <script src="assets/js/magang.js?v=1.0.0"></script>
 </body>
 
 </html>

@@ -87,6 +87,20 @@ class Model extends CI_Model
         }
     }
 
+    public function get_presensi_harian($tanggal)
+    {
+        $this->db->select('p.id AS id, p.nama AS nama, pr.id AS presensi_id, pr.masuk AS masuk, pr.pulang AS pulang, p.status AS status, pr.ket AS keterangan');
+        $this->db->from('register_peserta_magang p');
+        $this->db->join(
+            'register_presensi_magang pr',
+            "p.id = pr.peserta_id AND DATE(pr.tgl) = ".$this->db->escape($tanggal),
+            'left'
+        );
+        $this->db->order_by('status', 'DESC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function simpan_data($tabel, $data)
     {
         try {
@@ -142,5 +156,43 @@ class Model extends CI_Model
                 return ['status' => true, 'message' => 'Peserta Magang Berhasil Diperbarui'];
         } else
             return ['status' => false, 'message' => 'Gagal Simpan Peserta, Silakan Ulangi Lagi'];
+    }
+
+    function proses_simpan_edit_presensi($data) {
+
+        if ($data['presensi_id'] <> '-1') {
+            $dataPresensi = array(
+                'tgl' => $data['tanggal'],
+                'peserta_id' => $data['peserta_id'],
+                'masuk' => $data['jam_datang'],
+                'pulang' => $data['jam_pulang'],
+                'ket' => $data['ket'],
+                'modified_by' => $this->session->userdata('fullname'),
+                'modified_on' => date('Y-m-d H:i:s')
+            );
+
+            $querySimpan = $this->pembaharuan_data('register_presensi_magang', $dataPresensi, 'id', $data['presensi_id']);
+
+        } else {
+            $dataPresensi = array(
+                'tgl' => $data['tanggal'],
+                'peserta_id' => $data['peserta_id'],
+                'masuk' => $data['jam_datang'],
+                'pulang' => $data['jam_pulang'],
+                'ket' => $data['ket'],
+                'created_by' => $this->session->userdata('fullname'),
+                'created_on' => date('Y-m-d H:i:s')
+            );
+
+            $querySimpan = $this->simpan_data('register_presensi_magang', $dataPresensi);
+        }
+
+        if ($querySimpan == 1) {
+            if ($data['presensi_id'] == '-1')
+                return ['status' => true, 'message' => 'Presensi Peserta Magang Berhasil Disimpan'];
+            else
+                return ['status' => true, 'message' => 'Presensi Peserta Magang Berhasil Diperbarui'];
+        } else
+            return ['status' => false, 'message' => 'Gagal Simpan Presensi Peserta, Silakan Ulangi Lagi'];
     }
 }

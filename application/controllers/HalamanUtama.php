@@ -18,7 +18,7 @@ class HalamanUtama extends MY_Controller
         $allowed = [
             'dashboard',
             'manage_peserta',
-            'presensi'
+            'laporan_presensi'
         ];
 
         if (in_array($halaman, $allowed)) {
