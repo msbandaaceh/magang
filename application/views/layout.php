@@ -54,7 +54,7 @@
         <div class="sidebar-wrapper" data-simplebar="true">
             <div class="sidebar-header">
                 <div>
-                    <img src="assets/images/icons/meeting.webp" class="logo-icon" alt="logo icon">
+                    <img src="assets/images/leumang.png" class="logo-icon" alt="logo icon">
                 </div>
                 <div>
                     <h4 class="logo-text"><?= $this->session->userdata('nama_client_app') ?></h4>
