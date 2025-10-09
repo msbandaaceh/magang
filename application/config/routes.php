@@ -16,6 +16,8 @@ $route['show_tabel_presensi_peserta_magang'] = 'HalamanLaporan/show_tabel_presen
 $route['edit_presensi'] = 'HalamanLaporan/edit_presensi';
 $route['simpan_edit_presensi'] = 'HalamanLaporan/simpan_edit_presensi';
 $route['lihat_foto'] = 'HalamanLaporan/lihat_foto';
+$route['show_lis_peserta'] = 'HalamanLaporan/show_peserta';
+$route['unduh_presensi'] = 'HalamanLaporan/unduh_presensi';
 
 $route['show_tabel_peserta_magang'] = 'HalamanMagang/show_tabel_peserta_magang';
 $route['show_peserta'] = 'HalamanMagang/show_peserta';

@@ -32,6 +32,26 @@ class HalamanLaporan extends MY_Controller
         echo json_encode(['data_peserta' => $data]);
     }
 
+    public function show_peserta()
+    {
+        $lis_peserta = $this->model->get_seleksi_array('register_peserta_magang')->result();
+        $peserta = array();
+        $peserta[''] = '-- Pilih Peserta Magang --';
+        foreach ($lis_peserta as $row) {
+            $peserta[$row->id] = $row->nama;
+        }
+
+        $peserta_ = form_dropdown('peserta', $peserta, '', 'class="form-control select2" id="peserta"');
+
+        echo json_encode(
+            array(
+                'st' => 1,
+                'peserta' => $peserta_
+            )
+        );
+        return;
+    }
+
     public function edit_presensi()
     {
         $presensi_id = $this->encryption->decrypt(base64_decode($this->input->post('presensi_id')));
@@ -88,13 +108,20 @@ class HalamanLaporan extends MY_Controller
 
     public function simpan_edit_presensi()
     {
+        function kosongkan_jam($jam)
+        {
+            return $jam == '00:00:00' ? null : $jam;
+        }
+
+        $jam_datang = kosongkan_jam($this->input->post('jam_datang'));
+        $jam_pulang = kosongkan_jam($this->input->post('jam_pulang'));
 
         $data = [
             'presensi_id' => $this->encryption->decrypt(base64_decode($this->input->post('id'))),
             'peserta_id' => $this->encryption->decrypt(base64_decode($this->input->post('peserta_id'))),
             'tanggal' => $this->input->post('tanggal'),
-            'jam_datang' => $this->input->post('jam_datang'),
-            'jam_pulang' => $this->input->post('jam_pulang'),
+            'jam_datang' => $jam_datang,
+            'jam_pulang' => $jam_pulang,
             'ket' => $this->input->post('ket')
         ];
 
@@ -127,5 +154,45 @@ class HalamanLaporan extends MY_Controller
 
         return;
 
+    }
+
+    public function unduh_presensi()
+    {
+        $this->form_validation->set_rules('tgl_awal', 'Tanggal Awal', 'trim|required');
+        $this->form_validation->set_rules('tgl_akhir', 'Tanggal Akhir', 'trim|required');
+        $this->form_validation->set_rules('peserta', 'Peserta Magang', 'trim|required');
+        $this->form_validation->set_message(['required' => '%s Harus Dipilih']);
+
+        if ($this->form_validation->run() == FALSE) {
+            echo json_encode(['success' => 2, 'message' => validation_errors()]);
+            return;
+        }
+
+        $tgl_awal = $this->input->post('tgl_awal');
+        $tgl_akhir = $this->input->post('tgl_akhir');
+        $peserta = $this->input->post('peserta');
+
+        $url = site_url('halamanlaporan/cetak_presensi/'.$tgl_awal.'/'.$tgl_akhir.'/'.$peserta);
+        echo json_encode(['success' => 1, 'message' => 'Download Daftar Hadir Berhasil', 'url' => $url]);
+        return;
+    }
+
+    public function cetak_presensi($tgl_awal, $tgl_akhir, $peserta) {
+        $get_data_peserta = $this->model->get_seleksi_array('register_peserta_magang', ['id' => $peserta]);
+        $data['nama'] = $get_data_peserta->row()->nama;
+        $data['nim'] = $get_data_peserta->row()->nim;
+        $data['prodi'] = $get_data_peserta->row()->program_studi;
+        $data['nama_pt'] = $get_data_peserta->row()->nama_pt;
+        $data['kop'] = $this->session->userdata('kop_satker');
+        $data['satker'] = ucwords(strtolower($this->session->userdata('nama_pengadilan')));
+
+        $data['data_presensi'] = $this->model->get_data_presensi($peserta, $tgl_awal, $tgl_akhir);
+
+        $html = $this->load->view('template_presensi', $data, true);
+        $this->pdf->loadHtml($html);
+        $this->pdf->setPaper('A4', 'portrait');
+        $this->pdf->set_option('isRemoteEnabled', true);
+        $this->pdf->render();
+        $this->pdf->stream('Laporan_Presensi_Mahasiswa_' . $data['nama'] . '.pdf', array("Attachment" => 1));
     }
 }

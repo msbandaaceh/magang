@@ -15,12 +15,16 @@
         </div>
         <h6 class="mb-0 text-uppercase">Presensi Peserta Magang</h6>
         <hr />
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="input-group mb-3">
                     <input type="text" id="tglPresensi" class="form-control">
                     <button class="btn btn-light" type="button" onclick="cariPresensi()">Cari Presensi</button>
                 </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-end">
+                <button class="btn btn-light" type="button" onclick="cetakPresensi()"><i
+                        class="bx bxs-printer"></i>Cetak Presensi</button>
             </div>
         </div>
         <div class="row">
@@ -114,6 +118,45 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="cetak-presensi" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <form id="formCetakPresensi" class="modal-content bg-gradient-moonlit">
+            <div class="modal-header">
+                <div>
+                    <i class="bx bxs-user me-1 font-22"></i>
+                </div>
+                <h5 class="mb-0">CETAK PRESENSI MAHASISWA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <label for="tgl_awal" class="form-label">TANGGAL AWAL</label><code> *</code>
+                        <input type="text" id="tgl_awal" name="tgl_awal" class="form-control">
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <label for="tgl_akhir" class="form-label">TANGGAL AKHIR</label><code> *</code>
+                        <input type="text" id="tgl_akhir" name="tgl_akhir" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="peserta" class="form-label">PESERTA MAGANG</label><code> *</code>
+                        <div id="peserta_"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-success" id="btn-simpan"><i
+                        class="bx bxs-download"></i>Unduh</button>
+            </div>
+        </form>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->

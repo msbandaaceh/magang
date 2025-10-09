@@ -76,6 +76,7 @@ class MY_Controller extends CI_Controller
         }
 
         $this->session->set_userdata('logged_in', TRUE);
+        $this->session->set_userdata('nama_pengadilan', $this->get_config_value('4'));
     }
 
     protected function cek_token($token)

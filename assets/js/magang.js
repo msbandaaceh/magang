@@ -77,6 +77,30 @@ $(function () {
             }
         });
     });
+
+    $(document).off('submit', '#formCetakPresensi').on('submit', '#formCetakPresensi', function (e) {
+        e.preventDefault();
+        let form = this;
+        let formData = new FormData(form);
+
+        $.ajax({
+            url: 'unduh_presensi',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (res) {
+                notifikasi(res.message, res.success);
+                if (res.success == '1') {
+                    window.location = res.url;
+                }
+            },
+            error: function () {
+                notifikasi('Terjadi kesalahan saat menyimpan data.', 4);
+            }
+        });
+    });
 });
 
 function notifikasi(pesan, result) {
@@ -516,6 +540,7 @@ function aturIzin() {
 function handleVideo(mediaStream) {
     stream = mediaStream;
     video.srcObject = stream;
+    video.style.transform = "scaleX(-1)"; // buat mirrored
 
     // fix iOS Safari
     video.setAttribute("playsinline", true);
@@ -792,6 +817,43 @@ function lihatFoto(presensi_id, jenis) {
         } else if (json.st == 0) {
             pesan('PERINGATAN', json.msg, '');
             $('#table_pegawai').DataTable().ajax.reload();
+        }
+    });
+}
+
+function cetakPresensi() {
+    $("#cetak-presensi").modal('show');
+    flatpickr('#tgl_awal, #tgl_akhir', {
+        altFormat: 'l, d F Y',
+        altInput: true,
+        dateFormat: 'Y-m-d',
+        locale: {
+            firstDayOfWeek: 7,
+            weekdays: {
+                shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            },
+            months: {
+                shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+            },
+        }
+    });
+
+    $.post('show_lis_peserta', function (response) {
+        var json = jQuery.parseJSON(response);
+        if (json.st == 1) {
+            $("#peserta_").html("");
+
+            $("#peserta_").append(json.peserta);
+
+            $('#peserta').select2({
+                theme: 'bootstrap4',
+                dropdownParent: $('#cetak-presensi'),
+                width: '100%',
+            });
         }
     });
 }

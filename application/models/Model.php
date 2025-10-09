@@ -93,7 +93,7 @@ class Model extends CI_Model
         $this->db->from('register_peserta_magang p');
         $this->db->join(
             'register_presensi_magang pr',
-            "p.id = pr.peserta_id AND DATE(pr.tgl) = ".$this->db->escape($tanggal),
+            "p.id = pr.peserta_id AND DATE(pr.tgl) = " . $this->db->escape($tanggal),
             'left'
         );
         $this->db->order_by('status', 'DESC');
@@ -158,7 +158,8 @@ class Model extends CI_Model
             return ['status' => false, 'message' => 'Gagal Simpan Peserta, Silakan Ulangi Lagi'];
     }
 
-    function proses_simpan_edit_presensi($data) {
+    function proses_simpan_edit_presensi($data)
+    {
 
         if ($data['presensi_id'] <> '-1') {
             $dataPresensi = array(
@@ -194,5 +195,87 @@ class Model extends CI_Model
                 return ['status' => true, 'message' => 'Presensi Peserta Magang Berhasil Diperbarui'];
         } else
             return ['status' => false, 'message' => 'Gagal Simpan Presensi Peserta, Silakan Ulangi Lagi'];
+    }
+
+    function get_data_presensi($peserta_id, $tgl_awal, $tgl_akhir)
+    {
+        // Ambil data presensi dari database
+        $this->db->select('tgl, masuk, pulang, ket');
+        $this->db->from('register_presensi_magang');
+        $this->db->where('peserta_id', $peserta_id);
+        $this->db->where('tgl >=', $tgl_awal);
+        $this->db->where('tgl <=', $tgl_akhir);
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        // Simpan hasil query ke array asosiatif dengan key tanggal
+        $presensi_data = [];
+        foreach ($result as $row) {
+            $presensi_data[$row['tgl']] = $row;
+        }
+
+        // Buat daftar tanggal dari tgl_awal ke tgl_akhir
+        $start = new DateTime($tgl_awal);
+        $end = new DateTime($tgl_akhir);
+        $end->modify('+1 day');
+
+        $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+        $data_tampil = [];
+
+        foreach ($period as $date) {
+            $tgl = $date->format("Y-m-d");
+            $hari = $date->format("N"); // 1 = Senin ... 7 = Minggu
+
+            // Jika Sabtu/Minggu
+            if ($hari == 6 || $hari == 7) {
+                $data_tampil[] = [
+                    'tanggal' => $this->tanggalhelper->convertDayDate($tgl),
+                    'masuk' => 'Hari Libur',
+                    'pulang' => 'Hari Libur',
+                    'ket' => ''
+                ];
+                continue;
+            }
+
+            // Jika tanggal merah (API)
+            $params = [
+                'api_key' => $this->config->item('api_key'),
+                'tgl' => $tgl
+            ];
+
+            $result = $this->apihelper->get($this->config->item('api_izincuti') . '/cek_tgl_merah', $params);
+            if ($result['status_code'] == 200 && $result['response']['status'] == 'success') {
+                $data_tampil[] = [
+                    'tanggal' => $this->tanggalhelper->convertDayDate($tgl),
+                    'masuk' => 'Hari Libur',
+                    'pulang' => 'Hari Libur',
+                    'ket' => ''
+                ];
+                continue;
+            }
+
+            // Ambil data presensi jika ada
+            if (isset($presensi_data[$tgl])) {
+                $masuk = $presensi_data[$tgl]['masuk'];
+                $pulang = $presensi_data[$tgl]['pulang'];
+
+                $data_tampil[] = [
+                    'tanggal' => $this->tanggalhelper->convertDayDate($tgl),
+                    'masuk' => ($masuk && $masuk != '00:00:00') ? $masuk : 'Tidak Presensi',
+                    'pulang' => ($pulang && $pulang != '00:00:00') ? $pulang : 'Tidak Presensi',
+                    'ket' => $presensi_data[$tgl]['ket']
+                ];
+            } else {
+                $data_tampil[] = [
+                    'tanggal' => $this->tanggalhelper->convertDayDate($tgl),
+                    'masuk' => 'Tidak Presensi',
+                    'pulang' => 'Tidak Presensi',
+                    'ket' => ''
+                ];
+            }
+        }
+
+        return $data_tampil;
     }
 }
