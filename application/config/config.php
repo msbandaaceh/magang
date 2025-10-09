@@ -68,3 +68,4 @@ $config['jwt_issuer'] = 'sso.local';
 $config['jwt_expire_time'] = 3600; // 1 jam
 
 $config['api_key'] = '';
+$config['api_izincuti'] = 'seudati.ms-bandaaceh.local/api';
