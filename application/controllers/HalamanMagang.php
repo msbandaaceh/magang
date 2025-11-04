@@ -106,4 +106,33 @@ class HalamanMagang extends MY_Controller
         }
 
     }
+    
+    public function reset_perangkat()
+    {
+        $id = $this->encryption->decrypt(base64_decode($this->input->post('id')));
+
+        $query = $this->model->get_seleksi_array('register_peserta_magang', ['id' => $id]);
+        if ($query->num_rows() > 0) {
+            $data = [
+                'token' => null,
+                'modified_on' => date('Y-m-d H:i:s'),
+                'modified_by' => $this->session->userdata('fullname')
+            ];
+
+            $reset = $this->model->pembaharuan_data('register_peserta_magang', $data, 'id', $id);
+            if ($reset == '1') {
+                $st = 1;
+            } else {
+                $st = 2;
+            }
+        } else {
+            $st = 2;
+        }
+        echo json_encode(
+            array(
+                'st' => $st,
+            )
+        );
+        return;
+    }
 }

@@ -7,6 +7,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['get_lokasi'] = 'HalamanPresensi/get_lokasi';
 $route['simpan_perangkat'] = 'HalamanPresensi/simpan_perangkat';
+$route['reset_perangkat'] = 'HalamanMagang/reset_perangkat';
 
 $route['presensi'] = 'HalamanPresensi/presensi';
 $route['show_presensi'] = 'HalamanPresensi/show_presensi';

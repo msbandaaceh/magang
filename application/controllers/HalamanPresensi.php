@@ -88,11 +88,11 @@ class HalamanPresensi extends CI_Controller
         $data = base64_decode($foto);
         // bikin nama file unik
         $filename = 'foto_' . time() . '.jpg';
-        $path = FCPATH . 'uploads/foto/'.$peserta.'/' . $filename;
-        $dbpath = 'uploads/foto/'.$peserta.'/' . $filename;
+        $path = FCPATH . 'uploads/foto/' . $peserta . '/' . $filename;
+        $dbpath = 'uploads/foto/' . $peserta . '/' . $filename;
         // pastikan folder ada
-        if (!is_dir(FCPATH . 'uploads/foto/'.$peserta.'/')) {
-            mkdir(FCPATH . 'uploads/foto/'.$peserta.'/', 0777, true);
+        if (!is_dir(FCPATH . 'uploads/foto/' . $peserta . '/')) {
+            mkdir(FCPATH . 'uploads/foto/' . $peserta . '/', 0777, true);
         }
 
         // simpan file ke folder

@@ -125,7 +125,7 @@
                 class='bx bxs-up-arrow-alt'></i></a>
         <!--End Back To Top Button-->
         <footer class="page-footer">
-            <p class="mb-0">Copyright © 2024. All right reserved.</p>
+            <p class="mb-0">Copyright © 2025. All right reserved.</p>
         </footer>
     </div>
 
@@ -188,7 +188,7 @@
         };
     </script>
 
-    <script src="assets/js/magang.js?v=1.0.0"></script>
+    <script src="assets/js/magang.js?v=1.2"></script>
 </body>
 
 </html>

@@ -240,6 +240,9 @@ function loadTabelPesertaMagang() {
                             onclick="loadPeserta('${row.id}')"
                             data-bs-toggle="modal"><i class="bx bxs-pencil"></i>
                         </button>
+                        <button type="button" class="btn btn-secondary" title="Reset Perangkat Peserta"
+                            onclick="resetPerangkat('${row.id}')"><i class="bx bx-reset"></i>
+                        </button>
                     </div>
                 `;
 
@@ -279,6 +282,41 @@ function loadTabelPesertaMagang() {
         } catch (e) {
             console.error("Gagal parsing JSON:", e);
             $('#tabelPesertaMagang').html('<div class="alert alert-danger">Gagal memuat data peserta magang.</div>');
+        }
+    });
+}
+
+function resetPerangkat(id) {
+    Swal.fire({
+        title: "RESET PERANGKAT PRESENSI",
+        text: "RESET PERANGKAT PRESENSI UNTUK PESERTA MAGANG INI?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#8EC165",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Reset!",
+        cancelButtonText: "Tidak!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post('reset_perangkat', {id: id}, function (response) {
+                var json = jQuery.parseJSON(response);
+                if (json.st == 1) {
+                    Swal.fire({
+                        title: "Berhasil!",
+                        text: "Perangkat sudah di reset, silakan melakukan perekaman ulang perangkat presensi.",
+                        icon: "success",
+                        confirmButtonColor: "#8EC165"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Gagal", "Anda Gagal mereset perangkat presensi, Silakan Ulangi Lagi", "error");
+                } 
+            }).fail(() => {
+                Swal.fire("Gagal", "Terjadi kesalahan saat menghubungi server.", "error");
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire("Batal", "Anda Tidak Presensi Apel", "error");
         }
     });
 }
