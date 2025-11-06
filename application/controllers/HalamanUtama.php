@@ -18,10 +18,24 @@ class HalamanUtama extends MY_Controller
         $allowed = [
             'dashboard',
             'manage_peserta',
-            'laporan_presensi'
+            'laporan_presensi',
+            'panduan_penggunaan',
+            'dokumentasi_teknis'
         ];
 
         if (in_array($halaman, $allowed)) {
+            // Cek akses untuk dokumentasi teknis (hanya admin)
+            if ($halaman == 'dokumentasi_teknis') {
+                $role = $this->session->userdata('role');
+                $peran = $this->session->userdata('peran');
+                $is_admin = ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker']));
+                
+                if (!$is_admin) {
+                    show_404();
+                    return;
+                }
+            }
+            
             $data['peran'] = $this->session->userdata('peran');
             $data['page'] = $halaman;
 

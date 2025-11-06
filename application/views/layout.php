@@ -86,6 +86,30 @@
                         <div class="menu-title">Presensi</div>
                     </a>
                 </li>
+
+                <li class="menu-label">Bantuan</li>
+                <li>
+                    <a href="javascript:;" data-page="panduan_penggunaan">
+                        <div class="parent-icon"><i class='bx bx-book-open'></i>
+                        </div>
+                        <div class="menu-title">Panduan Penggunaan</div>
+                    </a>
+                </li>
+                <?php 
+                // Tampilkan menu Dokumentasi Teknis hanya untuk admin
+                $role = $this->session->userdata('role');
+                $peran = $this->session->userdata('peran');
+                $is_admin = ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker']));
+                if ($is_admin): 
+                ?>
+                <li>
+                    <a href="javascript:;" data-page="dokumentasi_teknis">
+                        <div class="parent-icon"><i class='bx bx-code-alt'></i>
+                        </div>
+                        <div class="menu-title">Dokumentasi Teknis</div>
+                    </a>
+                </li>
+                <?php endif; ?>
             </ul>
         </div>
 
