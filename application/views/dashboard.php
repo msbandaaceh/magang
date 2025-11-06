@@ -23,7 +23,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-secondary">Total Peserta</p>
+                                <p class="mb-0">Total Peserta</p>
                                 <h4 class="my-1" id="totalPeserta">-</h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
@@ -38,7 +38,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-secondary">Peserta Aktif</p>
+                                <p class="mb-0">Peserta Aktif</p>
                                 <h4 class="my-1" id="pesertaAktif">-</h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto">
@@ -53,7 +53,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-secondary">Presensi Masuk Hari Ini</p>
+                                <p class="mb-0">Presensi Masuk Hari Ini</p>
                                 <h4 class="my-1" id="presensiMasuk">-</h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
@@ -68,7 +68,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-secondary">Belum Presensi</p>
+                                <p class="mb-0">Belum Presensi</p>
                                 <h4 class="my-1" id="belumPresensi">-</h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto">
@@ -134,7 +134,7 @@
                             </a>
                         </div>
                         <div class="d-grid mt-2">
-                            <a href="javascript:;" data-page="manage_peserta" class="btn btn-outline-primary">
+                            <a href="javascript:;" data-page="manage_peserta" class="btn btn-success">
                                 <i class='bx bx-user-plus me-1'></i>Kelola Peserta
                             </a>
                         </div>
@@ -153,7 +153,7 @@
                                 <h6 class="mb-0">Presensi Terbaru</h6>
                             </div>
                             <div class="ms-auto">
-                                <a href="javascript:;" data-page="laporan_presensi" class="btn btn-sm btn-outline-primary">
+                                <a href="javascript:;" data-page="laporan_presensi" class="btn btn-sm btn-light">
                                     Lihat Semua <i class='bx bx-right-arrow-alt'></i>
                                 </a>
                             </div>
@@ -257,10 +257,29 @@ function updateChart(chartData) {
             },
             zoom: {
                 enabled: false
-            }
+            },
+            background: 'transparent'
         },
         dataLabels: {
-            enabled: true
+            enabled: true,
+            style: {
+                colors: ['#ffffff'],
+                fontSize: '11px',
+                fontWeight: 600
+            },
+            background: {
+                enabled: true,
+                foreColor: '#ffffff',
+                backgroundColor: '#1e293b',
+                padding: 4,
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: '#334155',
+                opacity: 0.9,
+                dropShadow: {
+                    enabled: false
+                }
+            }
         },
         stroke: {
             curve: 'smooth',
@@ -280,42 +299,72 @@ function updateChart(chartData) {
             categories: categories,
             labels: {
                 style: {
-                    colors: '#6c757d',
-                    fontSize: '12px',
-                    fontWeight: 500
+                    colors: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: 600
                 }
             },
             axisBorder: {
-                color: '#dee2e6'
+                color: '#ffffff',
+                opacity: 0.3
             }
         },
         yaxis: {
             title: {
                 text: 'Jumlah Presensi',
                 style: {
-                    color: '#6c757d',
-                    fontSize: '12px',
-                    fontWeight: 500
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: 600
                 }
             },
             labels: {
                 style: {
-                    colors: '#6c757d',
-                    fontSize: '12px',
-                    fontWeight: 500
+                    colors: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: 600
                 }
             },
             min: 0
         },
         tooltip: {
+            theme: 'dark',
+            style: {
+                fontSize: '13px',
+                fontFamily: 'inherit'
+            },
+            backgroundColor: '#1e293b',
+            borderColor: '#334155',
+            borderWidth: 1,
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
             y: {
                 formatter: function(val) {
                     return val + " peserta";
                 }
+            },
+            marker: {
+                show: true
+            },
+            x: {
+                show: true,
+                format: 'dd MMM yyyy'
             }
         },
         grid: {
-            borderColor: '#f1f1f1',
+            borderColor: '#ffffff',
+            opacity: 0.1,
+            strokeDashArray: 3,
+            xaxis: {
+                lines: {
+                    show: true
+                }
+            },
+            yaxis: {
+                lines: {
+                    show: true
+                }
+            }
         }
     };
     
