@@ -95,20 +95,20 @@
                         <div class="menu-title">Panduan Penggunaan</div>
                     </a>
                 </li>
-                <?php 
+                <?php
                 // Tampilkan menu Dokumentasi Teknis hanya untuk admin
                 $role = $this->session->userdata('role');
                 $peran = $this->session->userdata('peran');
                 $is_admin = ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker']));
-                if ($is_admin): 
-                ?>
-                <li>
-                    <a href="javascript:;" data-page="dokumentasi_teknis">
-                        <div class="parent-icon"><i class='bx bx-code-alt'></i>
-                        </div>
-                        <div class="menu-title">Dokumentasi Teknis</div>
-                    </a>
-                </li>
+                if ($is_admin):
+                    ?>
+                    <li>
+                        <a href="javascript:;" data-page="dokumentasi_teknis">
+                            <div class="parent-icon"><i class='bx bx-code-alt'></i>
+                            </div>
+                            <div class="menu-title">Dokumentasi Teknis</div>
+                        </a>
+                    </li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -195,7 +195,7 @@
             loadPage('dashboard');
 
             // Navigasi SPA
-            $('[data-page]').on('click', function (e) {
+            $(document).on('click', '[data-page]', function (e) {
                 e.preventDefault();
                 $('.wrapper').removeClass('toggled');
                 let page = $(this).data('page');

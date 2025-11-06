@@ -66,4 +66,88 @@ class HalamanUtama extends MY_Controller
         $this->session->sess_destroy();
         redirect($sso_server . '/keluar');
     }
+
+    public function get_statistik_dashboard()
+    {
+        $this->load->model('Model', 'model');
+        $tanggal_hari_ini = date('Y-m-d');
+        
+        // Total peserta
+        $total_peserta = $this->model->get_seleksi_array('register_peserta_magang')->num_rows();
+        
+        // Peserta aktif
+        $peserta_aktif = $this->model->get_seleksi_array('register_peserta_magang', ['status' => '1'])->num_rows();
+        
+        // Peserta tidak aktif
+        $peserta_tidak_aktif = $this->model->get_seleksi_array('register_peserta_magang', ['status' => '0'])->num_rows();
+        
+        // Presensi hari ini
+        $presensi_hari_ini = $this->model->get_presensi_harian($tanggal_hari_ini);
+        $sudah_presensi_masuk = 0;
+        $sudah_presensi_pulang = 0;
+        $belum_presensi = 0;
+        
+        foreach ($presensi_hari_ini as $row) {
+            if ($row->status == '1') { // Hanya hitung peserta aktif
+                if ($row->masuk) {
+                    $sudah_presensi_masuk++;
+                }
+                if ($row->pulang) {
+                    $sudah_presensi_pulang++;
+                }
+                if (!$row->masuk && !$row->pulang) {
+                    $belum_presensi++;
+                }
+            }
+        }
+        
+        // Data presensi 7 hari terakhir untuk chart
+        $data_chart = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $tanggal = date('Y-m-d', strtotime("-$i days"));
+            $hari = $this->tanggalhelper->convertDayDate($tanggal);
+            $presensi_tgl = $this->model->get_presensi_harian($tanggal);
+            $total_presensi = 0;
+            foreach ($presensi_tgl as $row) {
+                if ($row->status == '1' && ($row->masuk || $row->pulang)) {
+                    $total_presensi++;
+                }
+            }
+            $data_chart[] = [
+                'tanggal' => date('d/m', strtotime($tanggal)),
+                'hari' => explode(', ', $hari)[0], // Ambil nama hari saja
+                'total' => $total_presensi
+            ];
+        }
+        
+        // Presensi terbaru (5 terakhir)
+        $this->db->select('p.nama, pr.tgl, pr.masuk, pr.pulang');
+        $this->db->from('register_presensi_magang pr');
+        $this->db->join('register_peserta_magang p', 'p.id = pr.peserta_id', 'left');
+        $this->db->where('p.status', '1');
+        $this->db->order_by('pr.created_on', 'DESC');
+        $this->db->limit(5);
+        $presensi_terbaru = $this->db->get()->result();
+        
+        $data_presensi_terbaru = [];
+        foreach ($presensi_terbaru as $row) {
+            $data_presensi_terbaru[] = [
+                'nama' => $row->nama,
+                'tanggal' => $this->tanggalhelper->convertDayDate($row->tgl),
+                'masuk' => $row->masuk ? $this->tanggalhelper->konversiJam($row->masuk) : '-',
+                'pulang' => $row->pulang ? $this->tanggalhelper->konversiJam($row->pulang) : '-'
+            ];
+        }
+        
+        echo json_encode([
+            'total_peserta' => $total_peserta,
+            'peserta_aktif' => $peserta_aktif,
+            'peserta_tidak_aktif' => $peserta_tidak_aktif,
+            'sudah_presensi_masuk' => $sudah_presensi_masuk,
+            'sudah_presensi_pulang' => $sudah_presensi_pulang,
+            'belum_presensi' => $belum_presensi,
+            'chart_data' => $data_chart,
+            'presensi_terbaru' => $data_presensi_terbaru
+        ]);
+    }
 }

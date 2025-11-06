@@ -25,5 +25,6 @@ $route['show_peserta'] = 'HalamanMagang/show_peserta';
 $route['simpan_peserta'] = 'HalamanMagang/simpan_peserta';
 
 $route['cek_token'] = 'HalamanUtama/cek_token_sso';
+$route['get_statistik_dashboard'] = 'HalamanUtama/get_statistik_dashboard';
 
 $route['keluar'] = 'HalamanUtama/keluar';
