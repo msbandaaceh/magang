@@ -66,7 +66,15 @@ class MY_Controller extends CI_Controller
         }
 
         #Cek peran pegawai
-        if (in_array($this->session->userdata('role'), ['super', 'validator_uk_satker', 'admin_satker'])) {
+        $akses = [
+            'super',
+            'validator_uk_satker',
+            'validator_kepeg_satker',
+            'validator_ptip_satker',
+            'admin_satker'
+        ];
+
+        if (in_array($this->session->userdata('role'), $akses)) {
             $this->session->set_userdata('peran', 'admin');
         } else {
             $sso_url = $this->config->item('sso_server'); // misalnya simpan di config
