@@ -1,3 +1,9 @@
+<?php
+$presensi_url = site_url('presensi');
+$role = $this->session->userdata('role');
+$peran = $this->session->userdata('peran');
+$is_admin_menu = ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker']));
+?>
 <div class="page-wrapper">
     <div class="page-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -13,374 +19,300 @@
                 </nav>
             </div>
         </div>
-        <h6 class="mb-0 text-uppercase">Panduan Penggunaan Sistem</h6>
+        <h6 class="mb-0 text-uppercase">Panduan Penggunaan &amp; Manual Book</h6>
+        <p class="text-muted mb-3">Dokumen ini menjelaskan penggunaan aplikasi dari sisi <strong>administrator / tim pengelola</strong> dan <strong>mahasiswa magang</strong> (pengguna halaman presensi).</p>
+
+        <div class="card border shadow-none mb-4">
+            <div class="card-body">
+                <h6 class="mb-2"><i class="bx bx-download me-1"></i>Unduh manual untuk ditambah screenshot</h6>
+                <p class="small text-muted mb-3">Gunakan berkas <strong>Word</strong> untuk menempel gambar di kotak yang disediakan, lalu simpan sebagai <strong>.docx</strong> atau ekspor <strong>PDF</strong> dari Word. Berkas <strong>PDF</strong> di bawah adalah versi siap cetak dengan kotak penanda (bisa digabung dengan PDF lain jika perlu).</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="<?= site_url('unduh_manual_word') ?>" class="btn btn-primary px-4" target="_blank" rel="noopener">
+                        <i class="bx bxs-file-doc me-1"></i>Unduh Word (.doc)
+                    </a>
+                    <a href="<?= site_url('unduh_manual_pdf') ?>" class="btn btn-outline-danger px-4" target="_blank" rel="noopener">
+                        <i class="bx bxs-file-pdf me-1"></i>Unduh PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <hr />
-        
-        <?php
-        $role = $this->session->userdata('role');
-        $peran = $this->session->userdata('peran');
-        
-        // Tentukan jenis pengguna
-        $is_admin = ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker']));
-        $is_operator = ($role == 'operator' || $role == 'petugas');
-        $is_pegawai = (!$is_admin && !$is_operator);
-        ?>
-        
-        <div class="row">
+
+        <!-- Pengantar -->
+        <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="bx bx-book-open me-2"></i>Panduan Penggunaan</h5>
-                    </div>
+                <div class="card border-primary border-opacity-25">
                     <div class="card-body">
-                        <?php if ($is_admin): ?>
-                            <!-- Panduan untuk Admin -->
-                            <div class="alert alert-info">
-                                <h6><i class="bx bx-info-circle me-2"></i>Panduan untuk Administrator</h6>
-                            </div>
-                            
-                            <div class="accordion" id="accordionAdmin">
-                                <!-- Manajemen Peserta Magang -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading1">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
-                                            <i class="bx bx-user me-2"></i>Manajemen Peserta Magang
-                                        </button>
-                                    </h2>
-                                    <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#accordionAdmin">
-                                        <div class="accordion-body">
-                                            <h6>Menambah Peserta Magang Baru:</h6>
-                                            <ol>
-                                                <li>Klik menu <strong>"Manajemen Peserta Magang"</strong> di sidebar</li>
-                                                <li>Klik tombol <strong>"Tambah Peserta Magang"</strong> di pojok kanan atas</li>
-                                                <li>Isi form dengan data peserta:
-                                                    <ul>
-                                                        <li>NIM Peserta Magang (wajib)</li>
-                                                        <li>Nama Peserta Magang (wajib)</li>
-                                                        <li>Nama Perguruan Tinggi (wajib)</li>
-                                                        <li>Nama Program Studi (wajib)</li>
-                                                        <li>Nomor Handphone (wajib)</li>
-                                                        <li>Status Peserta (Aktif/Tidak Aktif)</li>
-                                                    </ul>
-                                                </li>
-                                                <li>Klik <strong>"Simpan"</strong> untuk menyimpan data</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Mengedit Data Peserta:</h6>
-                                            <ol>
-                                                <li>Pada tabel peserta, klik tombol <strong>"Edit"</strong> (ikon pensil) pada baris peserta yang ingin diedit</li>
-                                                <li>Ubah data yang diperlukan</li>
-                                                <li>Klik <strong>"Simpan"</strong> untuk menyimpan perubahan</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Melihat Detail Peserta:</h6>
-                                            <ol>
-                                                <li>Klik tombol <strong>"Lihat Detail"</strong> (ikon mata) pada baris peserta</li>
-                                                <li>Informasi lengkap peserta akan ditampilkan</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Reset Perangkat Peserta:</h6>
-                                            <ol>
-                                                <li>Klik tombol <strong>"Reset Perangkat"</strong> (ikon reset) pada baris peserta</li>
-                                                <li>Konfirmasi reset perangkat</li>
-                                                <li>Peserta harus mendaftarkan ulang perangkat untuk presensi</li>
-                                            </ol>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Laporan Presensi -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading2">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-                                            <i class="bx bx-file me-2"></i>Laporan Presensi
-                                        </button>
-                                    </h2>
-                                    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
-                                        <div class="accordion-body">
-                                            <h6>Melihat Laporan Presensi:</h6>
-                                            <ol>
-                                                <li>Klik menu <strong>"Laporan" > "Presensi"</strong> di sidebar</li>
-                                                <li>Pilih tanggal presensi yang ingin dilihat</li>
-                                                <li>Klik tombol <strong>"Cari Presensi"</strong></li>
-                                                <li>Data presensi akan ditampilkan dalam tabel</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Mengedit Presensi:</h6>
-                                            <ol>
-                                                <li>Klik pada nama peserta di tabel presensi</li>
-                                                <li>Form edit akan muncul dengan data presensi saat ini</li>
-                                                <li>Ubah jam datang atau jam pulang sesuai kebutuhan</li>
-                                                <li>Pilih keterangan jika diperlukan</li>
-                                                <li>Klik <strong>"Simpan"</strong> untuk menyimpan perubahan</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Melihat Foto Presensi:</h6>
-                                            <ol>
-                                                <li>Klik pada badge jam datang atau jam pulang di tabel</li>
-                                                <li>Foto presensi akan ditampilkan dalam modal</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Mencetak/Unduh Laporan Presensi:</h6>
-                                            <ol>
-                                                <li>Klik tombol <strong>"Cetak Presensi"</strong> di pojok kanan atas</li>
-                                                <li>Pilih tanggal awal dan tanggal akhir</li>
-                                                <li>Pilih peserta magang yang ingin dicetak</li>
-                                                <li>Klik <strong>"Unduh"</strong> untuk mengunduh laporan dalam format PDF</li>
-                                            </ol>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Tips dan Trik -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading3">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
-                                            <i class="bx bx-lightbulb me-2"></i>Tips dan Trik
-                                        </button>
-                                    </h2>
-                                    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
-                                        <div class="accordion-body">
-                                            <ul>
-                                                <li>Pastikan data peserta sudah lengkap sebelum mengaktifkan status</li>
-                                                <li>Gunakan fitur reset perangkat jika peserta mengganti perangkat</li>
-                                                <li>Lakukan backup data secara berkala</li>
-                                                <li>Periksa laporan presensi secara rutin untuk memastikan akurasi data</li>
-                                                <li>Gunakan fitur pencarian untuk menemukan data dengan cepat</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        <?php elseif ($is_operator): ?>
-                            <!-- Panduan untuk Operator/Petugas -->
-                            <div class="alert alert-warning">
-                                <h6><i class="bx bx-info-circle me-2"></i>Panduan untuk Operator/Petugas</h6>
-                            </div>
-                            
-                            <div class="accordion" id="accordionOperator">
-                                <!-- Presensi Peserta -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOp1">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOp1">
-                                            <i class="bx bx-check-circle me-2"></i>Melakukan Presensi untuk Peserta
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOp1" class="accordion-collapse collapse show" data-bs-parent="#accordionOperator">
-                                        <div class="accordion-body">
-                                            <h6>Langkah-langkah Presensi:</h6>
-                                            <ol>
-                                                <li>Pastikan Anda berada di dalam area presensi yang ditentukan</li>
-                                                <li>Buka aplikasi presensi di perangkat yang sudah terdaftar</li>
-                                                <li>Pilih peserta magang yang akan melakukan presensi</li>
-                                                <li>Aktifkan kamera dan ambil foto diri</li>
-                                                <li>Pastikan lokasi GPS sudah terdeteksi dengan benar</li>
-                                                <li>Klik tombol <strong>"Simpan Presensi"</strong></li>
-                                                <li>Tunggu konfirmasi bahwa presensi berhasil disimpan</li>
-                                            </ol>
-                                            
-                                            <div class="alert alert-info mt-3">
-                                                <strong>Catatan Penting:</strong>
-                                                <ul class="mb-0">
-                                                    <li>Presensi masuk dapat dilakukan sebelum jam 12:00</li>
-                                                    <li>Presensi pulang dapat dilakukan setelah jam 12:00</li>
-                                                    <li>Setiap peserta hanya dapat presensi sekali per hari untuk masuk dan pulang</li>
-                                                    <li>Pastikan koneksi internet stabil saat melakukan presensi</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Melihat Laporan Presensi -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOp2">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOp2">
-                                            <i class="bx bx-list-ul me-2"></i>Melihat Laporan Presensi
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOp2" class="accordion-collapse collapse" data-bs-parent="#accordionOperator">
-                                        <div class="accordion-body">
-                                            <h6>Melihat Laporan Presensi Harian:</h6>
-                                            <ol>
-                                                <li>Klik menu <strong>"Laporan" > "Presensi"</strong> di sidebar</li>
-                                                <li>Pilih tanggal yang ingin dilihat</li>
-                                                <li>Klik tombol <strong>"Cari Presensi"</strong></li>
-                                                <li>Data presensi akan ditampilkan dalam tabel</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Informasi yang Ditampilkan:</h6>
-                                            <ul>
-                                                <li>Nama peserta magang</li>
-                                                <li>Jam datang (jika sudah presensi)</li>
-                                                <li>Jam pulang (jika sudah presensi)</li>
-                                                <li>Keterangan presensi</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Troubleshooting -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOp3">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOp3">
-                                            <i class="bx bx-error-circle me-2"></i>Pemecahan Masalah
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOp3" class="accordion-collapse collapse" data-bs-parent="#accordionOperator">
-                                        <div class="accordion-body">
-                                            <h6>Masalah yang Sering Terjadi:</h6>
-                                            
-                                            <div class="mb-3">
-                                                <strong>1. Lokasi tidak terdeteksi</strong>
-                                                <ul>
-                                                    <li>Pastikan GPS perangkat sudah diaktifkan</li>
-                                                    <li>Berikan izin akses lokasi pada browser</li>
-                                                    <li>Pastikan berada di dalam area presensi yang ditentukan</li>
-                                                </ul>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>2. Kamera tidak bisa diakses</strong>
-                                                <ul>
-                                                    <li>Berikan izin akses kamera pada browser</li>
-                                                    <li>Pastikan tidak ada aplikasi lain yang menggunakan kamera</li>
-                                                    <li>Refresh halaman dan coba lagi</li>
-                                                </ul>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>3. Presensi gagal disimpan</strong>
-                                                <ul>
-                                                    <li>Periksa koneksi internet</li>
-                                                    <li>Pastikan semua field sudah terisi dengan benar</li>
-                                                    <li>Hubungi administrator jika masalah berlanjut</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        <?php else: ?>
-                            <!-- Panduan untuk Pegawai Biasa -->
-                            <div class="alert alert-success">
-                                <h6><i class="bx bx-info-circle me-2"></i>Panduan untuk Pegawai</h6>
-                            </div>
-                            
-                            <div class="accordion" id="accordionPegawai">
-                                <!-- Melakukan Presensi -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingPeg1">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePeg1">
-                                            <i class="bx bx-check-circle me-2"></i>Cara Melakukan Presensi
-                                        </button>
-                                    </h2>
-                                    <div id="collapsePeg1" class="accordion-collapse collapse show" data-bs-parent="#accordionPegawai">
-                                        <div class="accordion-body">
-                                            <h6>Presensi Masuk (Sebelum Jam 12:00):</h6>
-                                            <ol>
-                                                <li>Buka aplikasi presensi di perangkat yang sudah terdaftar</li>
-                                                <li>Pastikan Anda berada di dalam area presensi</li>
-                                                <li>Pilih nama Anda dari dropdown peserta</li>
-                                                <li>Aktifkan kamera dan ambil foto diri</li>
-                                                <li>Pastikan lokasi GPS terdeteksi (akan muncul peta)</li>
-                                                <li>Jika lokasi sudah benar, tombol "Simpan Presensi" akan aktif</li>
-                                                <li>Klik <strong>"Simpan Presensi"</strong></li>
-                                                <li>Tunggu konfirmasi berhasil</li>
-                                            </ol>
-                                            
-                                            <h6 class="mt-3">Presensi Pulang (Setelah Jam 12:00):</h6>
-                                            <ol>
-                                                <li>Lakukan langkah yang sama seperti presensi masuk</li>
-                                                <li>Pastikan Anda sudah melakukan presensi masuk terlebih dahulu</li>
-                                                <li>Klik <strong>"Simpan Presensi"</strong></li>
-                                            </ol>
-                                            
-                                            <div class="alert alert-warning mt-3">
-                                                <strong>Perhatian:</strong>
-                                                <ul class="mb-0">
-                                                    <li>Setiap peserta hanya dapat presensi sekali untuk masuk dan sekali untuk pulang per hari</li>
-                                                    <li>Jika sudah presensi masuk, tidak bisa presensi masuk lagi di hari yang sama</li>
-                                                    <li>Jika sudah presensi pulang, tidak bisa presensi lagi di hari yang sama</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Mendaftarkan Perangkat -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingPeg2">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePeg2">
-                                            <i class="bx bx-mobile me-2"></i>Mendaftarkan Perangkat
-                                        </button>
-                                    </h2>
-                                    <div id="collapsePeg2" class="accordion-collapse collapse" data-bs-parent="#accordionPegawai">
-                                        <div class="accordion-body">
-                                            <h6>Pendaftaran Perangkat Pertama Kali:</h6>
-                                            <ol>
-                                                <li>Saat pertama kali melakukan presensi, sistem akan meminta pendaftaran perangkat</li>
-                                                <li>Klik <strong>"Ya, Simpan!"</strong> untuk mendaftarkan perangkat</li>
-                                                <li>Perangkat akan terdaftar dan Anda bisa melakukan presensi</li>
-                                                <li>Perangkat yang terdaftar akan tersimpan dalam cookie browser</li>
-                                            </ol>
-                                            
-                                            <div class="alert alert-info mt-3">
-                                                <strong>Catatan:</strong>
-                                                <ul class="mb-0">
-                                                    <li>Setiap peserta hanya bisa menggunakan satu perangkat untuk presensi</li>
-                                                    <li>Jika ingin mengganti perangkat, hubungi administrator untuk reset perangkat</li>
-                                                    <li>Jangan hapus cookie browser jika ingin tetap menggunakan perangkat yang sama</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingPeg3">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePeg3">
-                                            <i class="bx bx-question-mark me-2"></i>Pertanyaan yang Sering Diajukan (FAQ)
-                                        </button>
-                                    </h2>
-                                    <div id="collapsePeg3" class="accordion-collapse collapse" data-bs-parent="#accordionPegawai">
-                                        <div class="accordion-body">
-                                            <div class="mb-3">
-                                                <strong>Q: Apa yang harus dilakukan jika lupa presensi masuk?</strong>
-                                                <p>A: Hubungi operator/petugas atau administrator untuk melakukan input manual presensi.</p>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>Q: Bisa presensi dari luar area yang ditentukan?</strong>
-                                                <p>A: Tidak, presensi hanya bisa dilakukan jika Anda berada di dalam area yang sudah ditentukan oleh sistem.</p>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>Q: Bagaimana jika perangkat hilang atau rusak?</strong>
-                                                <p>A: Hubungi administrator untuk melakukan reset perangkat, kemudian daftarkan perangkat baru.</p>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>Q: Apakah bisa presensi menggunakan perangkat lain?</strong>
-                                                <p>A: Tidak, setiap peserta hanya bisa menggunakan satu perangkat yang sudah terdaftar. Untuk menggunakan perangkat lain, perlu reset perangkat terlebih dahulu.</p>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <strong>Q: Bagaimana jika foto tidak jelas?</strong>
-                                                <p>A: Pastikan pencahayaan cukup dan wajah terlihat jelas. Ambil foto ulang jika perlu sebelum menyimpan presensi.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                        <h5 class="card-title"><i class="bx bx-book-reader me-2 text-primary"></i>Pengantar</h5>
+                        <p class="mb-2"><strong>LEUMANG</strong> (Aplikasi Manajemen Untuk Mahasiswa Magang) terdiri dari dua jalur penggunaan utama:</p>
+                        <ul class="mb-0">
+                            <li><strong>Panel pengelolaan</strong> — untuk pegawai yang masuk melalui <strong>SSO</strong> (single sign-on). Digunakan untuk mendaftarkan peserta, melihat laporan, mengoreksi presensi, dan mengunduh rekap.</li>
+                            <li><strong>Halaman presensi mahasiswa</strong> — diakses <strong>tanpa</strong> login SSO; mahasiswa membuka alamat khusus (biasanya dipasang di perangkat kiosk/tablet), memilih nama, memverifikasi lokasi, dan mengambil foto.</li>
+                        </ul>
+                        <p class="mt-3 mb-0 small text-muted">Administrator dapat mencetak atau membagikan <strong>Bagian B</strong> kepada mahasiswa magang sebagai lembar panduan.</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Bagian A: Administrator -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <h5 class="text-primary"><i class="bx bx-shield-quarter me-2"></i>Bagian A — Administrator &amp; Tim Pengelola</h5>
+                <p class="text-muted small mb-3">Untuk pengguna yang masuk dengan akun SSO dan memiliki peran yang diizinkan mengakses aplikasi ini.</p>
+            </div>
+        </div>
+
+        <div class="accordion mb-5" id="accordionAdmin">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#adm1">
+                        A.1 Login, akses, dan keamanan sesi
+                    </button>
+                </h2>
+                <div id="adm1" class="accordion-collapse collapse show" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <ol>
+                            <li>Buka URL aplikasi magang yang disediakan institusi.</li>
+                            <li>Jika belum login ke SSO, Anda akan diarahkan ke halaman <strong>login SSO</strong>.</li>
+                            <li>Setelah login berhasil, sesi aplikasi terisi; pastikan tidak membagikan perangkat yang masih aktif sesi pegawai.</li>
+                            <li>Sesi dicek berkala; jika token SSO tidak valid, lakukan login ulang sesuai petunjuk di layar.</li>
+                            <li>Hanya peran tertentu (misalnya <em>super</em>, <em>validator</em> terkait, <em>admin satker</em>) yang dapat mengakses modul ini — pengguna lain akan diarahkan kembali ke portal SSO.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#adm2">
+                        A.2 Dashboard
+                    </button>
+                </h2>
+                <div id="adm2" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <p>Dari menu <strong>Dashboard</strong> Anda dapat melihat ringkasan:</p>
+                        <ul>
+                            <li>Total peserta, peserta aktif, dan indikator presensi hari ini (masuk, pulang, belum presensi).</li>
+                            <li>Grafik tren presensi beberapa hari terakhir (sesuai implementasi di layar).</li>
+                        </ul>
+                        <p class="mb-0">Gunakan dashboard untuk pemantauan cepat kehadiran harian.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#adm3">
+                        A.3 Manajemen peserta magang
+                    </button>
+                </h2>
+                <div id="adm3" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <p><strong>Menu:</strong> <em>Manajemen Peserta Magang</em></p>
+                        <h6 class="mt-3">Menambah peserta baru</h6>
+                        <ol>
+                            <li>Klik <strong>Tambah Peserta Magang</strong>.</li>
+                            <li>Isi: NIM, nama, nama perguruan tinggi, program studi, nomor handphone, dan status (aktif / tidak aktif).</li>
+                            <li>Simpan. Data akan digunakan untuk daftar presensi dan token perangkat.</li>
+                        </ol>
+                        <h6 class="mt-3">Mengubah data peserta</h6>
+                        <ol>
+                            <li>Pada tabel, gunakan tombol edit pada baris peserta yang bersangkutan.</li>
+                            <li>Perbarui field yang diperlukan lalu simpan.</li>
+                        </ol>
+                        <h6 class="mt-3">Reset perangkat presensi</h6>
+                        <ol>
+                            <li>Jika mahasiswa mengganti HP/tablet atau cookie dihapus, gunakan fitur <strong>Reset Perangkat</strong> pada baris peserta (ikon sesuai tampilan).</li>
+                            <li>Setelah reset, mahasiswa harus mendaftarkan perangkat lagi saat pertama kali presensi (lihat Bagian B).</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#adm4">
+                        A.4 Laporan presensi, koreksi, dan unduh PDF
+                    </button>
+                </h2>
+                <div id="adm4" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <p><strong>Menu:</strong> <em>Laporan → Presensi</em></p>
+                        <h6>Melihat presensi per tanggal</h6>
+                        <ol>
+                            <li>Pilih <strong>tanggal</strong> yang ingin ditinjau.</li>
+                            <li>Klik <strong>Cari Presensi</strong> (atau tombol setara) untuk memuat tabel kehadiran.</li>
+                        </ol>
+                        <h6 class="mt-3">Mengoreksi / input manual</h6>
+                        <ol>
+                            <li>Klik pada nama peserta (atau baris yang disediakan) untuk membuka form pengeditan.</li>
+                            <li>Atur jam masuk dan/atau jam pulang, serta <strong>keterangan</strong> (misalnya manual, izin, sakit) sesuai kebijakan institusi.</li>
+                            <li>Simpan. Koreksi ini berguna jika mahasiswa lupa presensi atau terjadi kesalahan teknis.</li>
+                        </ol>
+                        <h6 class="mt-3">Melihat foto presensi</h6>
+                        <ol>
+                            <li>Pada tabel, gunakan indikator jam masuk/pulang yang dapat diklik untuk membuka foto yang tersimpan (jika ada).</li>
+                        </ol>
+                        <h6 class="mt-3">Mencetak / mengunduh laporan</h6>
+                        <ol>
+                            <li>Gunakan tombol cetak/unduh presensi (misalnya <strong>Cetak Presensi</strong>).</li>
+                            <li>Atur rentang tanggal dan filter peserta sesuai dialog.</li>
+                            <li>Unduh berkas <strong>PDF</strong> untuk arsip atau laporan formal.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#adm5">
+                        A.5 Keluar aplikasi
+                    </button>
+                </h2>
+                <div id="adm5" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <p>Gunakan menu/logout aplikasi untuk mengakhiri sesi dan mengarahkan ke halaman keluar SSO, sehingga akun tidak tertinggal aktif di perangkat bersama.</p>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($is_admin_menu): ?>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#adm6">
+                        A.6 Dokumentasi teknis (admin)
+                    </button>
+                </h2>
+                <div id="adm6" class="accordion-collapse collapse" data-bs-parent="#accordionAdmin">
+                    <div class="accordion-body">
+                        <p>Menu <strong>Dokumentasi Teknis</strong> (jika tampil di sidebar) diperuntukkan bagi administrator untuk referensi teknis tambahan. Pengguna tanpa hak akses tidak akan melihat menu ini.</p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Bagian B: Mahasiswa -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <h5 class="text-success"><i class="bx bx-user-pin me-2"></i>Bagian B — Mahasiswa Magang (Pengguna Presensi)</h5>
+                <p class="text-muted small mb-3">Mahasiswa <strong>tidak</strong> login ke SSO untuk presensi. Gunakan alamat khusus berikut (simpan atau cetak):</p>
+                <div class="alert alert-light border mb-3">
+                    <strong>Alamat presensi:</strong><br />
+                    <code class="user-select-all"><?= htmlspecialchars($presensi_url, ENT_QUOTES, 'UTF-8') ?></code>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion mb-4" id="accordionMhs">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#mhs1">
+                        B.1 Apa yang perlu disiapkan
+                    </button>
+                </h2>
+                <div id="mhs1" class="accordion-collapse collapse show" data-bs-parent="#accordionMhs">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>Perangkat dengan <strong>kamera</strong> dan <strong>internet</strong> yang stabil.</li>
+                            <li><strong>GPS / lokasi</strong> diaktifkan; izinkan browser mengakses lokasi saat diminta.</li>
+                            <li>Anda sudah terdaftar sebagai peserta magang oleh administrator (nama Anda muncul di daftar pilihan).</li>
+                            <li>Status peserta harus <strong>aktif</strong> agar dapat dipilih untuk presensi.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mhs2">
+                        B.2 Alur presensi (masuk &amp; pulang)
+                    </button>
+                </h2>
+                <div id="mhs2" class="accordion-collapse collapse" data-bs-parent="#accordionMhs">
+                    <div class="accordion-body">
+                        <ol>
+                            <li>Buka alamat presensi di atas menggunakan browser (disarankan di perangkat yang ditetapkan institusi).</li>
+                            <li>Klik tombol untuk membuka form presensi (misalnya <strong>Presensi Kehadiran</strong>).</li>
+                            <li>Tunggu peta/lokasi menunjukkan posisi Anda sesuai aturan institusi.</li>
+                            <li>Pilih <strong>nama Anda</strong> pada daftar peserta.</li>
+                            <li>Ambil <strong>foto diri</strong> melalui kamera sesuai petunjuk di layar.</li>
+                            <li>Kirim / simpan presensi.</li>
+                        </ol>
+                        <div class="alert alert-info mb-0">
+                            <strong>Aturan waktu (sesuai sistem):</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Presensi yang dicatat pada jam sebelum atau sama dengan <strong>12:00</strong> dianggap sebagai <strong>presensi masuk</strong> (kedatangan).</li>
+                                <li>Setelah ada catatan harian, presensi berikutnya pada jam <strong>setelah 12:00</strong> akan mencatat <strong>pulang</strong>.</li>
+                                <li>Anda tidak dapat mengulang presensi masuk di hari yang sama jika kedatangan sudah tercatat.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mhs3">
+                        B.3 Lokasi tidak valid atau peta tidak muncul
+                    </button>
+                </h2>
+                <div id="mhs3" class="accordion-collapse collapse" data-bs-parent="#accordionMhs">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>Pastikan izin <strong>lokasi</strong> untuk browser sudah diaktifkan.</li>
+                            <li>Berada di area yang ditetapkan institusi (pembatasan area mengacu pada pengaturan server).</li>
+                            <li>Coba muat ulang halaman; pastikan sinyal GPS kuat (bukan mode pesawat).</li>
+                            <li>Jika tetap gagal, lapor ke petugas — administrator dapat melakukan <strong>koreksi presensi manual</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mhs4">
+                        B.4 Pendaftaran perangkat (satu perangkat per peserta)
+                    </button>
+                </h2>
+                <div id="mhs4" class="accordion-collapse collapse" data-bs-parent="#accordionMhs">
+                    <div class="accordion-body">
+                        <p>Pada penggunaan pertama atau setelah reset oleh admin, sistem dapat meminta konfirmasi untuk <strong>mendaftarkan perangkat</strong>. Setuju hanya pada perangkat yang akan dipakai untuk presensi magang.</p>
+                        <ul>
+                            <li>Satu peserta terikat pada satu pola token perangkat — mengganti HP biasanya memerlukan <strong>reset</strong> oleh administrator.</li>
+                            <li>Hindari menghapus data browser/cookie jika tidak perlu, agar tidak harus mendaftar ulang.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mhs5">
+                        B.5 FAQ mahasiswa
+                    </button>
+                </h2>
+                <div id="mhs5" class="accordion-collapse collapse" data-bs-parent="#accordionMhs">
+                    <div class="accordion-body">
+                        <p><strong>Q: Saya lupa presensi masuk, bagaimana?</strong><br />
+                        A: Minta tolong petugas/admin untuk mencatatkan melalui fitur koreksi presensi di panel pengelola.</p>
+                        <p><strong>Q: Kamera tidak bisa dibuka?</strong><br />
+                        A: Berikan izin kamera pada browser; tutup aplikasi lain yang memakai kamera; coba refresh halaman.</p>
+                        <p><strong>Q: Nama saya tidak ada di daftar?</strong><br />
+                        A: Pastikan administrator sudah mendaftarkan Anda dan status peserta <em>aktif</em>.</p>
+                        <p><strong>Q: Ganti handphone?</strong><br />
+                        A: Hubungi admin untuk <em>reset perangkat</em>, lalu daftarkan perangkat baru saat presensi berikutnya.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light">
+            <div class="card-body py-3">
+                <p class="mb-0 small text-muted"><i class="bx bx-info-circle me-1"></i>Isi panduan mengikuti fitur yang tersedia di aplikasi. Kebijakan jam kerja, area presensi, dan sanksi kehadiran mengikuti aturan masing-masing institusi.</p>
+            </div>
+        </div>
     </div>
 </div>
-

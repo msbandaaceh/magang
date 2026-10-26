@@ -150,4 +150,54 @@ class HalamanUtama extends MY_Controller
             'presensi_terbaru' => $data_presensi_terbaru
         ]);
     }
+
+    /**
+     * Data bersama untuk manual book (PDF & Word).
+     */
+    private function _manual_book_data()
+    {
+        $role = $this->session->userdata('role');
+        $peran = $this->session->userdata('peran');
+
+        return [
+            'presensi_url' => site_url('presensi'),
+            'nama_app' => $this->session->userdata('nama_client_app'),
+            'deskripsi' => $this->session->userdata('deskripsi_client_app'),
+            'satker' => $this->session->userdata('nama_pengadilan'),
+            'tanggal_cetak' => date('d/m/Y H:i'),
+            'is_admin_menu' => ($peran == 'admin' || in_array($role, ['super', 'validator_uk_satker', 'admin_satker'])),
+        ];
+    }
+
+    /**
+     * Unduh manual book PDF (dompdf) — kotak putus-putus untuk penanda tempat screenshot.
+     */
+    public function unduh_manual_pdf()
+    {
+        $data = $this->_manual_book_data();
+        $html = $this->load->view('manual_book_pdf', $data, true);
+        $this->pdf->loadHtml($html);
+        $this->pdf->setPaper('A4', 'portrait');
+        $this->pdf->set_option('isRemoteEnabled', false);
+        $this->pdf->set_option('defaultFont', 'DejaVu Sans');
+        $this->pdf->render();
+        $this->pdf->stream('Manual_Book_LEUMANG_' . date('Y-m-d') . '.pdf', ['Attachment' => true]);
+    }
+
+    /**
+     * Unduh manual book untuk diedit di Microsoft Word (HTML sebagai .doc).
+     * Buka di Word, tempel screenshot di kotak, lalu Simpan sebagai .docx atau ekspor PDF dari Word.
+     */
+    public function unduh_manual_word()
+    {
+        $data = $this->_manual_book_data();
+        $filename = 'Manual_Book_LEUMANG_' . date('Y-m-d') . '.doc';
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/msword; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+        echo "\xEF\xBB\xBF";
+        $this->load->view('manual_book_word_html', $data);
+    }
 }

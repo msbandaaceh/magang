@@ -28,3 +28,6 @@ $route['cek_token'] = 'HalamanUtama/cek_token_sso';
 $route['get_statistik_dashboard'] = 'HalamanUtama/get_statistik_dashboard';
 
 $route['keluar'] = 'HalamanUtama/keluar';
+
+$route['unduh_manual_pdf'] = 'HalamanUtama/unduh_manual_pdf';
+$route['unduh_manual_word'] = 'HalamanUtama/unduh_manual_word';
